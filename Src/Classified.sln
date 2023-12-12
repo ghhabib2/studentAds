@@ -1,0 +1,80 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2047
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classified.Web", "Classified.Web\Classified.Web.csproj", "{A692B9F9-BDF0-4C6B-9EE7-21812F18D50E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F6AE03F-D687-477A-B64E-F0CEA475ECDB} = {1F6AE03F-D687-477A-B64E-F0CEA475ECDB}
+		{0BCBE67F-DE7C-4697-935E-F375093EDF95} = {0BCBE67F-DE7C-4697-935E-F375093EDF95}
+		{29FF068F-08EA-44D4-AB21-C87B2E82A53C} = {29FF068F-08EA-44D4-AB21-C87B2E82A53C}
+		{9247CAA7-3B62-473B-BE6C-60D743A360FA} = {9247CAA7-3B62-473B-BE6C-60D743A360FA}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classified.Data", "Classified.Data\Classified.Data.csproj", "{0BCBE67F-DE7C-4697-935E-F375093EDF95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classified.Domain", "Classified.Domain\Classified.Domain.csproj", "{1F6AE03F-D687-477A-B64E-F0CEA475ECDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classified.Services", "Classified.Services\Classified.Services.csproj", "{29FF068F-08EA-44D4-AB21-C87B2E82A53C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F6AE03F-D687-477A-B64E-F0CEA475ECDB} = {1F6AE03F-D687-477A-B64E-F0CEA475ECDB}
+		{0BCBE67F-DE7C-4697-935E-F375093EDF95} = {0BCBE67F-DE7C-4697-935E-F375093EDF95}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classified.Component", "Classified.Component\Classified.Component.csproj", "{9247CAA7-3B62-473B-BE6C-60D743A360FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A692B9F9-BDF0-4C6B-9EE7-21812F18D50E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A692B9F9-BDF0-4C6B-9EE7-21812F18D50E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A692B9F9-BDF0-4C6B-9EE7-21812F18D50E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A692B9F9-BDF0-4C6B-9EE7-21812F18D50E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BCBE67F-DE7C-4697-935E-F375093EDF95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BCBE67F-DE7C-4697-935E-F375093EDF95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BCBE67F-DE7C-4697-935E-F375093EDF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BCBE67F-DE7C-4697-935E-F375093EDF95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F6AE03F-D687-477A-B64E-F0CEA475ECDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F6AE03F-D687-477A-B64E-F0CEA475ECDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F6AE03F-D687-477A-B64E-F0CEA475ECDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F6AE03F-D687-477A-B64E-F0CEA475ECDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29FF068F-08EA-44D4-AB21-C87B2E82A53C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29FF068F-08EA-44D4-AB21-C87B2E82A53C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29FF068F-08EA-44D4-AB21-C87B2E82A53C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29FF068F-08EA-44D4-AB21-C87B2E82A53C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9247CAA7-3B62-473B-BE6C-60D743A360FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9247CAA7-3B62-473B-BE6C-60D743A360FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9247CAA7-3B62-473B-BE6C-60D743A360FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9247CAA7-3B62-473B-BE6C-60D743A360FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98678A70-CC7F-4581-8A8E-9465CE2864AF}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://nima-farokhi.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Classified.Data\\Classified.Data.csproj
+		SccProjectName1 = Classified.Data
+		SccLocalPath1 = Classified.Data
+		SccProjectUniqueName2 = Classified.Domain\\Classified.Domain.csproj
+		SccProjectName2 = Classified.Domain
+		SccLocalPath2 = Classified.Domain
+		SccProjectUniqueName3 = Classified.Web\\Classified.Web.csproj
+		SccProjectName3 = Classified.Web
+		SccLocalPath3 = Classified.Web
+		SccProjectUniqueName4 = Classified.Services\\Classified.Services.csproj
+		SccProjectName4 = Classified.Services
+		SccLocalPath4 = Classified.Services
+		SccProjectUniqueName5 = Classified.Component\\Classified.Component.csproj
+		SccProjectName5 = Classified.Component
+		SccLocalPath5 = Classified.Component
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,592 @@
+﻿@using System.Collections.Specialized
+@using System.Web.UI.WebControls
+@using Classified.Component.Html
+@using Classified.Domain.ViewModels.Advertisment
+@model Classified.Domain.ViewModels.Advertisment.ClassifiedAdvertisementModifyViewModel
+@{
+    ViewBag.Title = "AdsEmailModification";
+    Layout = "~/Views/Shared/_LayoutClient12.cshtml";
+}
+<section class="section bg-gray">
+    <div class="container ">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="section-title">
+                    <h2>Modify Advertisement</h2>
+                </div>
+            </div>
+        </div>
+        <section class="hero-area-ads">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="advance-search">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12"><b>Advertisement Id : </b><stron>@Model.Id</stron></div>
+                                <div class="col-lg-6 col-md-12"><b>Sender Email Address : </b><stron>@Model.EmailAddress</stron></div>
+                                <div class="col-lg-6 col-md-12">
+                                    <b>Final Modification Date :</b>
+                                    @if (@Model.UpdatedOnUtc.HasValue)
+                                    {
+                                        <strong>@Model.UpdatedOnUtc.Value.ToShortDateString()</strong>
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("No modification date registered for this advertisement.")
+                                    }
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <b>Final Approvement Date :</b>
+                                    @if (@Model.ApprovedDate.HasValue)
+                                    {
+                                        <strong>@Model.ApprovedDate.Value.ToShortDateString()</strong>
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("No approvement date registered for this advertisement.")
+                                    }
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    @if (!Model.IsActive)
+                                    {
+                                        @Html.Raw("This advertisement is not active.")
+                                    }
+
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    @if (Model.IsSubmitted && Model.IsActive && Model.IsApproved)
+                                    {
+                                        @Html.Raw("You are able to promote this advertisement every 48 hours.<br/>")
+
+                                    }
+                                </div>
+                                @if (Model.IsSubmitted && !(Model.IsApproved || Model.IsRejected))
+                                {
+                                    <div class="alert-warning text-justify">
+                                        This advertisement is already submitted but not reviewed yet. Please wait until you receive the final status via email. Until then you will be able to see the final status of this advertisement using <strong>Final Submission Tab</strong> and you will no be able to make any changes in the content of it.
+                                    </div>
+                                }
+                                else
+                                {
+                                    if (Model.IsApproved)
+                                    {
+                                        <div class="col-sm-12">
+                                            &nbsp;
+                                        </div>
+                                        <div class="col-sm-12 text-center">
+                                            @if (Model.IsActive)
+                                            {
+                                                <button class="btn btn-dark">Deactivate</button>
+                                                <button class="btn btn-danger">Delete</button>
+                                            }
+                                            else
+                                            {
+                                                if (Model.IsApproved)
+                                                {
+                                                    <button class="btn btn-success">Activate</button>
+                                                }
+                                            }
+                                            <button class="btn btn-success">Promote</button>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            &nbsp;
+                                        </div>
+                                        <div class="alert-success text-justify" style="margin: 0 auto;">
+                                            This Advertisement Approved
+                                        </div>
+                                    }
+
+                                    if (Model.IsRejected)
+                                    {
+                                        <div>
+                                            &nbsp;
+                                        </div>
+                                        <div class="alert-danger text-justify" style="margin: 0 auto;">
+                                            @Html.Raw($"This advertisement rejected. Please check the reasons for rejection in <b>Final Submission</b> tab, and re-submit the advertisement after solving the problems. Our team will review this advertisement again after resubmission.")
+                                        </div>
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="product-details">
+                    <div class="content">
+                        <ul class="zeroMargin nav nav-pills  justify-content-left" id="ads-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateCategory ? Html.Raw("active") : Html.Raw(""))" id="modify-category-tab" data-toggle="pill" href="#modify-category" role="tab" aria-controls="pills-Category" aria-selected="@(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateCategory ? Html.Raw("true") : Html.Raw("false"))">Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdatePrimaryData ? Html.Raw("active") : Html.Raw(""))" id="primary-information-tab" data-toggle="pill" href="#primary-information" role="tab" aria-controls="pills-PrimaryInformation" aria-selected="@(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdatePrimaryData ? Html.Raw("true") : Html.Raw("false"))">Basic Information</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateAttributes ? Html.Raw("active") : Html.Raw(""))" id="attributes-tab" data-toggle="pill" href="#attributes" role="tab" aria-controls="pills-Attributes" aria-selected="@(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateAttributes ? Html.Raw("true") : Html.Raw("false"))">Attributes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateImages ? Html.Raw("active") : Html.Raw(""))" id="attributes-tab" data-toggle="pill" href="#images" role="tab" aria-controls="pills-Images" aria-selected="@(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateImages ? Html.Raw("true") : Html.Raw("false"))">Images</a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateDescription ? Html.Raw("active") : Html.Raw(""))" id="images-tab" data-toggle="pill" href="#description" role="tab" aria-controls="pills-description" aria-selected="@(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateDescription ? Html.Raw("true") : Html.Raw("false"))">Description</a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateSeo ? Html.Raw("active") : Html.Raw(""))" id="images-tab" data-toggle="pill" href="#seo" role="tab" aria-controls="pills-seo" aria-selected="@(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateSeo ? Html.Raw("true") : Html.Raw("false"))">SEO</a>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link" id="images-tab" data-toggle="pill" href="#finalSubmission" role="tab" aria-controls="pills-finalSubmission">Final Submission</a>
+                            </li>
+                            @*
+
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Add Description</a>
+                                </li>*@
+                        </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateCategory ? @Html.Raw("show active") : @Html.Raw(""))" id="modify-category" role="tabpanel" aria-labelledby="modify-category-tab">
+                                <h3 class="tab-title">Category</h3>
+                                <!--    Content of the Category Modification Form-->
+                                @using (Html.BeginForm("UpdateCategory", "Advertisements", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+                                {
+                                    <div class="form-group">
+                                        @Html.ValidationSummary()
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.ClassifiedCategoryId)
+                                        <div class="dropdown hierarchy-select" id="category-dropdown">
+                                            <button type="button" class="btn btn-primary dropdown-toggle" id="category-dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                            <div class="dropdown-menu" aria-labelledby="category-dropdown-button">
+                                                <div class="hs-searchbox">
+                                                    <input type="text" class="form-control" autocomplete="off">
+                                                </div>
+                                                @if (Model.ClassifiedCategoryId.HasValue && Model.ClassifiedCategoryId.Value != -1)
+                                                {
+                                                    @(Html.LinkView(Model.ClassifiedCategoryList)
+                                                                                                                                                  .HtmlAttributes(new { @class = "hs-menu-inner" })
+                                                                                                                                                  .Children(m => m.ChildCategories)
+                                                                                                                                                  .ItemText("Name")
+                                                                                                                                                  .ItemValue("Id")
+                                                                                                                                                  .PlaceHolder("Please Select the category of your advertisement")
+                                                                                                                                                  .SelectedValue(Model.ClassifiedCategoryId.Value.ToString()));
+                                                }
+                                                else
+                                                {
+                                                    @(Html.LinkView(Model.ClassifiedCategoryList)
+                                                                                                                                                  .HtmlAttributes(new { @class = "hs-menu-inner" })
+                                                                                                                                                  .Children(m => m.ChildCategories)
+                                                                                                                                                  .ItemText("Name")
+                                                                                                                                                  .ItemValue("Id")
+                                                                                                                                                  .PlaceHolder("Please Select the category of your advertisement")
+                                                                                                                                                  .SelectedValue(""));
+                                                }
+                                            </div>
+                                            <input class="d-none" name="ClassifiedCategoryId" id="ClassifiedCategoryId" readonly="readonly" aria-hidden="true" type="text" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="Title" id="Title" value="@Model.Title" />
+                                        <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                                        <input type="hidden" name="Address" id="Address" value="@Model.Address" />
+                                        <input type="hidden" name="EmailAddress" id="EmailAddress" value="@Model.EmailAddress" />
+                                        <input type="hidden" name="ClassifiedCategoryId" id="ClassifiedCategoryId" value="@Model.ClassifiedCategoryId" />
+                                        <input type="hidden" name="Price" id="Price" value="@Model.Price" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-transparent">Update Category</button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="tab-pane fade @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdatePrimaryData ? @Html.Raw("show active") : @Html.Raw(""))" id="primary-information" role="tabpanel" aria-labelledby="primary-information-tab">
+                                <h3 class="tab-title">Basic Information</h3>
+                                @using (Html.BeginForm("UpdateBasicInformation", "Advertisements", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+                                {
+                                    <div class="form-group">
+                                        @Html.ValidationSummary()
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Title)
+                                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Address)
+                                        @Html.TextAreaFor(m => m.Address, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.ShortDescription)
+                                        @Html.TextAreaFor(m => m.ShortDescription, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.PhoneNumber)
+                                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", @type = "tel" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Price)
+                                        @Html.TextBoxFor(m => m.Price, new { @class = "form-control", @type = "number" })
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="CreatedOnUtc" id="CreatedOnUtc" value="@Model.CreatedOnUtc" />
+                                        <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                                        <input type="hidden" name="EmailAddress" id="EmailAddress" value="@Model.EmailAddress" />
+                                        <input type="hidden" name="ClassifiedCategoryId" id="ClassifiedCategoryId" value="@Model.ClassifiedCategoryId" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-transparent">Update Basic Information</button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="tab-pane fade @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateAttributes ? @Html.Raw("show active") : @Html.Raw(""))" id="attributes" role="tabpanel" aria-labelledby="attributes-tab">
+                                <h3 class="tab-title">Advertisement Attributes</h3>
+                                @using (Html.BeginForm("UpdateAttributes", "Advertisements", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+                                {
+
+                                    if (Model.AdvertisementAttributes.Any())
+                                    {
+                                        <table class="table table-bordered product-table">
+                                            <tbody>
+                                                @foreach (var attribute in Model.AdvertisementAttributes)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @if (attribute.AttributeControlTypeId != 3)
+                                                            {
+                                                                <label for="@attribute.AttributeName">@attribute.AttributeLabel</label>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @switch (attribute.AttributeControlTypeId)
+                                                            {
+                                                                case 1:
+                                                                    {
+                                                                        //Control is Drop-Down list. Add a Drop-Down list Here
+                                                                        <select id="@attribute.AttributeName" name="@attribute.AttributeName" class="form-control">
+                                                                            @foreach (var option in attribute.AttributesOptionValues)
+                                                                            {
+                                                                                <option value="@option.Value" @(attribute.AttributeValue == option.Value ? Html.Raw("selected") : Html.Raw(""))>@option.Value</option>
+                                                                            }
+                                                                        </select>
+                                                                        break;
+                                                                    }
+                                                                case 2:
+                                                                    {
+                                                                        //Control is a Radio-List. Add a Radio List to the form
+                                                                        foreach (var option in attribute.AttributesOptionValues)
+                                                                        {
+                                                                            <div>
+                                                                                <label class="form-check-label">
+                                                                                    <input type="radio" @if (!string.IsNullOrEmpty(attribute.AttributeValue)) { if (string.Equals(option.Value, attribute.AttributeValue)) { @Html.Raw("checked") } } id="@attribute.AttributeName" name="@attribute.AttributeName" value="@option.Value" />
+                                                                                    @option.Value
+                                                                                </label>
+                                                                            </div>
+                                                                        }
+                                                                        break;
+                                                                    }
+                                                                case 3:
+                                                                    {
+                                                                        //Control is a Check Box. Add a Check Box to the Form
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" id="@attribute.AttributeName" name="@attribute.AttributeName" @((!string.IsNullOrEmpty(attribute.AttributeValue)) ? Html.Raw("checked") : Html.Raw("")) class="form-check-input" />
+                                                                                @attribute.AttributeLabel
+                                                                            </label>
+                                                                        </div>
+                                                                        break;
+                                                                    }
+                                                                case 5:
+                                                                    {
+                                                                        //Control is a Multi-line Text box. Add a Multi line Text box to form
+                                                                        <textarea id="@attribute.AttributeName" name="@attribute.AttributeName" class="form-control">@if (!string.IsNullOrEmpty(attribute.AttributeValue)){@attribute.AttributeValue}</textarea>
+                                                                        break;
+                                                                    }
+                                                                case 6:
+                                                                    {
+                                                                        //Add a date Picker to the form
+                                                                        if (string.IsNullOrEmpty(attribute.AttributeValue))
+                                                                        {
+                                                                            <input type="text" class="form-control" id="@attribute.AttributeName" name="@attribute.AttributeName" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="text" class="form-control" id="@attribute.AttributeName" name="@attribute.AttributeName" value="@($"{Convert.ToDateTime(attribute.AttributeValue).ToShortDateString()}")" />
+                                                                        }
+
+                                                                        break;
+                                                                    }
+                                                                default:
+                                                                    {
+                                                                        // Add a text box to the form
+                                                                        <input type="text" value="@attribute.AttributeValue" id="@attribute.AttributeName" name="@attribute.AttributeName" class="form-control" />
+                                                                        break;
+                                                                    }
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    }
+
+                                    <div class="form-group">
+                                        <input type="hidden" name="CreatedOnUtc" id="CreatedOnUtc" value="@Model.CreatedOnUtc" />
+                                        <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                                        <input type="hidden" name="EmailAddress" id="EmailAddress" value="@Model.EmailAddress" />
+                                        <input type="hidden" name="ClassifiedCategoryId" id="ClassifiedCategoryId" value="@Model.ClassifiedCategoryId" />
+                                        <input type="text" style="display: none" name="Address" id="Address" value="@Model.Address" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-transparent">Update Attributes</button>
+                                    </div>
+                                }
+
+                            </div>
+                            <div class="tab-pane fade @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateImages ? @Html.Raw("show active") : @Html.Raw(""))" id="images" role="tabpanel" aria-labelledby="Image-Managmenet-tab">
+                                <h3 class="tab-title">Advertisement Images</h3>
+                                <p>Please choose the order of your image carefully. The very first image will be used as social meida frienly content while you are sharing your link in different social media platforms.</p>
+                                <hr />
+                                @*Display the list of the images uploaded*@
+                                @if (!Model.Images.Any())
+                                {
+                                    //Show a Message
+                                    <div class="alert-warning">
+                                        <p>There is no image uploaded for this Advertisement.</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    //load the Table
+                                    <table class="table table-bordered product-table" id="imageTable">
+                                        <tbody>
+                                            @foreach (var image in Model.Images)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @image.ImageGuid
+
+                                                    </td>
+                                                    <td style="text-align: center">
+                                                        <img src="/Images/Watermarked/@image.ImageName/" alt="@image.ImageGuid" style="width: 50%; margin: 0 auto;" />
+                                                    </td>
+                                                    <td>
+                                                        @using (Html.BeginForm("Delete", "Images", FormMethod.Post, new { @class = "form-horizontal style-form", @Styles = "display:none", @id = $"imageForm{@image.Id}", @name = $"imageForm{@image.Id}" }))
+                                                        {
+                                                            <input type="hidden" name="AdsId" id="AdsId" value="@Model.Id" />
+                                                            <input type="hidden" name="EmailAddress" id="EmailAddress" value="@Model.EmailAddress" />
+                                                            <input type="hidden" id="inputImage" name="ImageName" value="@image.ImageName" />
+                                                            <input type="hidden" id="Id" name="Id" value="@image.Id" />
+                                                            @Html.AntiForgeryToken()
+                                                        }
+                                                        <button title="Delete this image" class="btn btn-sm btn-danger js-delete" data-user-form="@Html.Raw($"imageForm{image.Id}")"><i class="fa fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+
+                                @using (Html.BeginForm("UploadAdsImageEmail", "Images", FormMethod.Post, new { @class = "form-horizontal style-form", enctype = "multipart/form-data" }))
+                                {
+
+                                    <div class="form-group">
+                                        <label for="inputFile">Select Image</label>
+                                        <input class="form-control" id="inputImage" name="inputImage" type="file" accept="image/*" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ImageGuid">Image Alternative Text</label>
+                                        <input type="text" class="form-control" id="ImageGuid" name="ImageGuid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                                        <input type="hidden" name="EmailAddress" id="EmailAddress" value="@Model.EmailAddress" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-transparent">Upload Image</button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="tab-pane fade @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateDescription ? @Html.Raw("show active") : @Html.Raw(""))" id="description" role="tabpanel" aria-labelledby="Description-Managmenet-tab">
+                                <h3 class="tab-title">Advertisement Description</h3>
+                                @using (Html.BeginForm("UpdateDescripiton", "Advertisements", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+                                {
+                                    <div class="form-group">
+                                        @if (string.IsNullOrEmpty(Model.Description))
+                                        {
+                                            @(
+                                                                                                                                        Html.WYSIWYGEditor("Description", EditorState.BasicEditor)
+                                                                                                                                            .PlaceHolder("Please write your description here")
+
+                                            )
+                                        }
+                                        else
+                                        {
+                                            @(
+                                                                                                                                        Html.WYSIWYGEditor("Description", EditorState.BasicEditor, Model.Description)
+                                                                                                                                            .PlaceHolder("Please write your description here")
+                                            )
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                                        <input type="hidden" name="EmailAddress" id="EmailAddress" value="@Model.EmailAddress" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-transparent">Update Description</button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="tab-pane fade @(Model.AdvertisementModificationFlag == AdvertisementModificationFlag.UpdateSeo ? @Html.Raw("show active") : @Html.Raw(""))" id="seo" role="tabpanel" aria-labelledby="Seo-Managmenet-tab">
+                                <h3 class="tab-title">Advertisement SEO</h3>
+                                <p>Make sure you update this section since we are going to use this data as soical media friendly content in order to help you share the link in different social media platforms.</p>
+                                <hr />
+                                @using (Html.BeginForm("UpdateSeo", "Advertisements", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+                                {
+                                    <div class="form-group">
+                                        @Html.ValidationSummary()
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.MetaTitle) <strong class="field-validation-error">(It is better for meta title to have between 50 to 60 characters)</strong>
+                                        @Html.TextBoxFor(m => m.MetaTitle, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.MetaKeyWord) <strong class="field-validation-error">(It is better for meta keyword to not have more than 120 characters)</strong>
+                                        @Html.TextBoxFor(m => m.MetaKeyWord, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group"> 
+                                        @Html.LabelFor(m => m.MetaDescription) <strong class="field-validation-error">(It is better for meta description to have between 50 to 300 characters)</strong>
+                                        @Html.TextAreaFor(m => m.MetaDescription, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="CreatedOnUtc" id="CreatedOnUtc" value="@Model.CreatedOnUtc" />
+                                        <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                                        <input type="hidden" name="EmailAddress" id="EmailAddress" value="@Model.EmailAddress" />
+                                        <input type="hidden" name="ClassifiedCategoryId" id="ClassifiedCategoryId" value="@Model.ClassifiedCategoryId" />
+                                        <input type="text" style="display: none" name="Address" id="Address" value="@Model.Address" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-transparent">Update SEO</button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="tab-pane fade" id="finalSubmission" role="tabpanel" aria-labelledby="final-submission-tab">
+                                <h3>
+                                    Final Submission of the Changes
+                                </h3>
+                                <p>By clicking the button "Submission", your advertisement will be submitted to our review panel. You will be informed about the result of the review and if you should do any sort of modification. Please click on the link "Preview" in order to see the preview of your advertisement.</p>
+                                <hr />
+                                @if (Model.RejectionReasonsLIst.Count > 0)
+                                {
+                                    <h3>
+                                        Rejection reasons:
+                                    </h3>
+                                    <ol type="1" style="list-style: upper-roman">
+                                        @foreach (var item in Model.RejectionReasonsLIst)
+                                        {
+                                            <li style="color: red">@item.Comment</li>
+                                        }
+                                    </ol>
+                                    <hr />
+                                }
+                                @using (Html.BeginForm("ClassifiedAdvertisementEmailSubmission", "Advertisements", FormMethod.Post, new { @style = "display:none", @id = "classified_Ads_Submission_Form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+                                    <input type="hidden" name="EmailAddress" id="EmailAddress" value="@Model.EmailAddress" />
+                                }
+                                <div>
+                                    <button id="btn_Ads_Submission" class="btn btn-primary">Submission</button>
+                                    @Html.RouteLink("Preview", "classifiedAdsDisplay", new { id = Model.Id }, new { @class = "btn btn-transparent", @target = "_blank" })
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+    @if(Model.IsSubmitted && !(Model.IsApproved || Model.IsRejected))
+    {
+        @Html.Raw("$('input, textarea, select, button').attr('disabled', 'disabled');")
+    }
+
+            $('#category-dropdown').hierarchySelect({
+                width: 'auto'
+            });
+            @foreach (var attribute in Model.AdvertisementAttributes)
+            {
+                if (attribute.AttributeControlTypeId == 6)
+                {
+                    @Html.Raw($"$(\"#{attribute.AttributeName}\").datepicker();")
+                }
+            }
+
+            $("#btn_Ads_Submission").click(function() {
+                bootbox.confirm({
+                    message: "Are you sure you want to submit this adverisement for review?",
+                    buttons: {
+                        confirm: {
+                            label: "Yes",
+                            className: "btn btn-primary btnModal"
+                        },
+                        cancel:
+                        {
+                            label: "No",
+                            className: "btn btn-danger"
+                        }
+                    },
+                    callback: function(result) {
+                        if (result) {
+                            //Submit the Advertisement
+                            document.getElementById("classified_Ads_Submission_Form").submit();
+                        }
+                    }
+                });
+            });
+
+            //Read the Delete button from the table
+            $("#imageTable").on("click",
+                ".js-delete",
+                function() {
+                    //Call Api
+                    var button = $(this);
+                    bootbox.confirm({
+                        message: "Are you sure you want to delete this Image? The process is irreversible!!",
+                        buttons: {
+                            confirm: {
+                                label: "Delete This Image",
+                                className: "btn btn-primary btnModal"
+                            },
+                            cancel:
+                            {
+                                label: "No",
+                                className: "btn btn-danger"
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                window.location.href = "DeleteCategoryAttribute/" + button.attr("data-ads-id");
+                            }
+                        }
+                    });
+                });
+
+        });
+
+
+    </script>
+
+    @Scripts.Render("~/bundles/summernote")
+
+}
+
+@section AdditionalMeta
+{
+    @Styles.Render("~/bundles/summernotecss")
+}
+

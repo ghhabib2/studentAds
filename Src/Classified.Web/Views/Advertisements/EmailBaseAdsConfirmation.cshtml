@@ -1,0 +1,28 @@
+﻿@model Classified.Domain.ViewModels.Advertisment.EmailBaseAdsConfirmationViewModel
+@{
+    ViewBag.Title = "EmailBaseAdsConfirmation";
+    Layout = "~/Views/Shared/_LayoutClient1.cshtml";
+}
+<section class="section bg-gray">
+    <div class="container">
+        <div class="col-sm-12">
+            <div class="section-title">
+                <h2>Advertisement Confirmation</h2>
+                <p>Dear @Model.EmailAddress, we confirmed your advertisement</p>
+            </div>
+            <div class="col-sm-12 widget">
+                <div class="alert-success">
+                    <p>Now you can modify the advertisement you submitted, just by clicking on the link below. It is possible to add more details to your ads such as images, extra attributes related to category you choose and etc. We will wait for you to complete the process of modification and submit the final version of advertisement. Our management team will review the ads afterwards and inform you whether it is publishable and if it published in our web site.</p>
+                    <p>Thank you again for choosing our service.</p>
+                </div>
+                <div class="text-center">
+                    <a href="@Model.EmailLink" target="_blank" class="btn btn-primary">Advertisement Modification</a>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</section>

@@ -1,0 +1,56 @@
+﻿@model Classified.Domain.ViewModels.Advertisment.ClassifiedAdvertisementListClientViewModel
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_LayoutClient1.cshtml";
+}
+
+<section class="section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="product-grid-list">
+                    <div class="row mt-30">
+                        @foreach (var item in Model.AdsList)
+                        {
+                            <div class="col-sm-12 col-lg-4 col-md-6">
+                                <!-- Ads Card -->
+                                <div class="product-item bg-light">
+                                    <div class="card">
+                                        <div class="thumb-content">
+                                            <div class="price">@item.PriceString</div>
+                                            <a href="">
+                                                <img class="card-img-top img-fluid" src="/Images/Watermarked/@item.ImageName/">
+                                            </a>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="card-title">
+                                                <a target="_blank" href="@item.AdsUrl">@item.Title</a>
+                                            </h4><ul class="list-inline product-meta">
+                                                <li class="list-inline-item">
+                                                    <a target="_blank" href="@item.CategoryUrl">
+                                                        <i class="fa fa-folder-open-o"></i>@item.ClassifiedCategoryName
+                                                    </a>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    <a href="">
+                                                        <i class="fa fa-calendar"></i>@item.DateString
+                                                    </a>
+                                                </li>
+                                            </ul><p class="card-text">@item.ShortDescription</p>
+                                        </div>
+                                        <div class="product-ratings text-center">
+                                            <a class="btn btn-primary" target="_blank" href="@item.AdsUrl">Select</a>
+                                        </div>
+                                        <div class="product-ratings">
+                                            &nbsp;<div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

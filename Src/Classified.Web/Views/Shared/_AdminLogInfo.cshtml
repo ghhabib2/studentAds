@@ -1,0 +1,7 @@
+﻿@using Microsoft.AspNet.Identity
+@using Classified.Web.UserServices
+@if (Request.IsAuthenticated)
+{
+    @($"{UserProfile.UserProfileInfo.FirstName} {UserProfile.UserProfileInfo.LastName}")
+}
+

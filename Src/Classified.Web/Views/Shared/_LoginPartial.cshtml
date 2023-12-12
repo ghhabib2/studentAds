@@ -1,0 +1,52 @@
+﻿@using Classified.Domain.Entities
+@using Classified.Web.UserServices
+@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="navbar-nav ml-auto mt-10">
+            <li class="nav-item dropdown dropdown-slide">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @Html.Raw($"Hello {UserProfile.UserProfileInfo.FirstName} {UserProfile.UserProfileInfo.LastName}")&nbsp;<span><i class="fa fa-angle-down"></i></span>
+                </a>
+                <!-- Dropdown list -->
+                <div class="dropdown-menu dropdown-menu-right">
+                    @if (User.IsInRole(RoleTypes.Admin) || User.IsInRole(RoleTypes.AdvancedUser))
+                    {
+                        @Html.ActionLink("Admin Dashboard", "Index", "Admin", routeValues: null, htmlAttributes: new { title = "Manage", @class = "dropdown-item" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Profile Management", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "dropdown-item" })
+                    }
+
+                    @Html.ActionLink("Submit an advertisement", "SubmitAdsByUser", "Account", routeValues: null, htmlAttributes: new { title = "Manage", @class = "dropdown-item" })
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link add-button" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+            </li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="navbar-nav ml-auto mt-10">
+        <li class="nav-item dropdown dropdown-slide">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                User Account<span><i class="fa fa-angle-down"></i></span>
+            </a>
+            <!-- Dropdown list -->
+            <div class="dropdown-menu dropdown-menu-right">
+                @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "dropdown-item" })
+                @Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "dropdown-item" })
+            </div>
+        </li>
+        <li class="nav-item">
+            @Html.ActionLink("Submit Your Ads by Email", "SubmitAdsByEmail", "Advertisements", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-link add-button" })
+        </li>
+    </ul>
+}

@@ -1,0 +1,104 @@
+﻿@using Classified.Component.Html
+@model Classified.Domain.ViewModels.Advertisment.AdvertisementEmailBasePrimaryRegisterationViewModel
+@{
+   
+    ViewBag.Title = "Submit your advertisements just by using your email";
+    Layout = "~/Views/Shared/_LayoutClient1.cshtml";
+}
+<section class="section bg-gray">
+    <div class="container">
+        <div class="col-sm-12">
+            <div class="section-title">
+                <h2>Register Your First Advertisement</h2>
+                <p>Use your email address to submit your Advertisements</p>
+            </div>
+            <div class="col-sm-12 widget">
+                <h3 class="widget-header user">
+                    Fill the form below
+                </h3>
+
+                @using (Html.BeginForm("SubmitByEmail", "Advertisements", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+                {
+                    <div class="form-group">
+                        @Html.ValidationSummary()
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.EmailAddress)
+                        @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ClassifiedCategoryId)
+                        <div class="dropdown hierarchy-select" id="example-one">
+                            <button type="button" class="btn btn-primary dropdown-toggle" id="example-one-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                            <div class="dropdown-menu" aria-labelledby="example-one-button">
+                                <div class="hs-searchbox">
+                                    <input type="text" class="form-control" autocomplete="off">
+                                </div>
+                                @if (Model.ClassifiedCategoryId.HasValue && Model.ClassifiedCategoryId.Value != -1)
+                                {
+                                    @(Html.LinkView(Model.Categories)
+                                                  .HtmlAttributes(new { @class = "hs-menu-inner" })
+                                                  .Children(m => m.ChildCategories)
+                                                  .ItemText("Name")
+                                                  .ItemValue("Id")
+                                                  .PlaceHolder("Please Select the category of your advertisement")
+                                                  .SelectedValue(Model.ClassifiedCategoryId.Value.ToString()));
+                                }
+                                else
+                                {
+                                    @(Html.LinkView(Model.Categories)
+                                                .HtmlAttributes(new { @class = "hs-menu-inner" })
+                                                .Children(m => m.ChildCategories)
+                                                .ItemText("Name")
+                                                .ItemValue("Id")
+                                                .PlaceHolder("Please Select the category of your advertisement")
+                                                .SelectedValue(""));
+
+                                }
+                            </div>
+                            <input class="d-none" name="ClassifiedCategoryId" id="ClassifiedCategoryId" readonly="readonly" aria-hidden="true" type="text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Title)
+                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Address)
+                        @Html.TextAreaFor(m => m.Address, new { @class = "form-control"})
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ShortDescription)
+                        @Html.TextAreaFor(m => m.ShortDescription, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="6Lfuz20UAAAAAFkUbI9RSMd9unIa2AflH4t8jeAM"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" value="true" name="isReSubmitted" id="isReSubmitted" />
+                        <button type="submit" class="btn btn-transparent">Submit</button>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+
+
+    </div>
+</section>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @Scripts.Render("https://www.google.com/recaptcha/api.js");
+
+    <script>
+        $('#example-one').hierarchySelect({
+            width: 'auto'
+        });
+
+    </script>
+}
+

@@ -1,0 +1,198 @@
+﻿@using Classified.Domain.ViewModels
+@using Classified.Services
+@using Classified.Web.UserServices
+<!DOCTYPE html>
+<!-- Update your html tag to include the itemscope and itemtype attributes. -->
+<html itemscope itemtype="http://schema.org/Article">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title - Students Classified Ads</title>
+
+    @* Styles that is going to be used in the page *@
+    @Styles.Render("~/Content/client1Style")
+
+    @* Scripts that is going to be used in the page *@
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/client1Scripts")
+    @Scripts.Render("~/bundles/bootbox")
+
+    @RenderSection("AdditionalMeta", false)
+
+</head>
+<body class="body-wrapper">
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <nav class="navbar navbar-expand-lg  navigation">
+                        <a class="navbar-brand" href="index.html">
+                            @Html.ActionLink(AppSettings.SiteName, "Index", "Home", null, new { @class = "navbar-brand" })
+                            @*<img src="images/logo.png" alt="">*@
+                        </a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="fa fa-bars"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto main-nav ">
+                                <li class="nav-item">
+                                    @Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link" })
+                                </li>
+                                <li class="nav-item">
+                                    @Html.RouteLink("Categories", "CategoriesHome", null, new { @class = "nav-link" })
+                                </li>
+                                <li class="nav-item">
+                                    @Html.RouteLink("About Us", "About-Us Page", null, new { @class = "nav-link" })
+                                </li>
+                                <li class="nav-item">
+                                    @Html.RouteLink("Contact Us", "Contact-Us Page", null, new { @class = "nav-link" })
+                                </li>
+                            </ul>
+                            @Html.Partial("_LoginPartial")
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="page-search">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Advance Search -->
+                    <div class="advance-search">
+                        @using (Html.BeginForm("FullTextSearch", "Home", FormMethod.Post))
+                        {
+                            <div class="form-row">
+                                <div class="form-group col-md-10">
+                                    <input type="text" class="form-control" id="id" name="id" placeholder="What are you looking for">
+                                </div>
+                                <div class="form-group col-md-2">
+
+                                    <button type="submit" class="btn btn-primary">Search Now</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    @RenderBody()
+
+    <!--============================
+    =            Footer            =
+    =============================-->
+    <footer class="footer section section-sm">
+        <!-- Container Start -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-7 offset-md-1 offset-lg-0">
+                    <!-- About -->
+                    <div class="block about">
+                        <!-- footer logo -->
+                        <img src="images/logo-footer.png" alt="">
+                        <!-- description -->
+                        <p class="alt-color">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                </div>
+                <!-- Link list -->
+                <div class="col-lg-2 offset-lg-1 col-md-3">
+                    <div class="block">
+                        &nbsp;
+                    </div>
+                </div>
+                <!-- Link list -->
+                <div class="col-lg-2 col-md-3 offset-md-1 offset-lg-0">
+                    <div class="block">
+                        
+                        <h4>Site Pages</h4>
+                        <ul>
+                            <li>@Html.ActionLink("Home", "Index", "Home", null, null)</li>
+                            <li>@Html.RouteLink("Categories", "CategoriesHome", null, null)</li>
+                            <li>@Html.RouteLink("About Us", "About-Us Page", null, null)</li>
+                            <li>@Html.RouteLink("Contact Us", "Contact-Us Page", null, null)</li>
+
+                        </ul>
+                    </div>
+                </div>
+                <!-- Promotion -->
+                <div class="col-lg-4 col-md-7">
+                    <!-- App promotion -->
+                    <div class="block-2 app-promotion" style="display: none">
+
+                        <a href="" >
+                            <!-- Icon -->
+                            <img src="images/footer/phone-icon.png" alt="mobile-icon">
+                        </a>
+                        <p>Get the Dealsy Mobile App and Save more</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Container End -->
+    </footer>
+    <!-- Footer Bottom -->
+    <footer class="footer-bottom">
+        <!-- Container Start -->
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 col-12">
+                    <!-- Copyright -->
+                    <div class="copyright">
+                        <p>Copyright © 2016. All Rights Reserved</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-12">
+                    <!-- Social Icons -->
+                    <ul class="social-media-icons text-right">
+                        <li><a class="fa fa-facebook" href=""></a></li>
+                        <li><a class="fa fa-twitter" href=""></a></li>
+                        <li><a class="fa fa-pinterest-p" href=""></a></li>
+                        <li><a class="fa fa-vimeo" href=""></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Container End -->
+        <!-- To Top -->
+        <div class="top-to">
+            <a id="top" class="" href=""><i class="fa fa-angle-up"></i></a>
+        </div>
+    </footer>
+
+
+    @*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCC72vZw-6tGqFyRhhg5CkF2fqfILn2Tsw"></script>*@
+
+
+
+
+    @RenderSection("scripts", required: false)
+
+
+    @*@{
+            var message = new MessageViewModle();
+        }
+
+
+
+        @if (TempData["stsMsg"] != null)
+        {
+            message = ((MessageViewModle)TempData["stsMsg"]);
+            TempData.Remove("stsMsg");
+
+        }
+        @if (!string.IsNullOrEmpty(message.MessageText))
+        {
+            @Html.Raw(string.Format("<script>bootbox.alert({{ title: '{0}', message: '{1}' }});</script>", message.MessageTitle, message.MessageText))
+        }*@
+
+    @Html.Raw(PopUpMessageGenerator.GenerateMessageOutPut);
+
+
+</body>
+</html>

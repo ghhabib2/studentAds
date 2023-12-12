@@ -1,0 +1,105 @@
+﻿@model Classified.Domain.ViewModels.Advertisment.CategoryManagmentViewMoel
+@{
+    ViewBag.Title = "Category Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="form-panel">
+
+    @using (Html.BeginForm("CategoryManagement", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryId, new { @class = "col-sm-12  control-label" })   
+        </div>
+        
+            @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.HierarchyCategoryList, "Id", "Name"), null, new { @class = "form-control" })
+        <div class="form-group"></div>
+        <div class="form-group">
+            @Html.Label("Categories type to display :", null, new { @class = "col-sm-12 control-label " })
+        </div>
+        foreach (var item in Model.CategoryTypes)
+        {
+            <div class="radio-inline">
+                <label>
+
+                    @(Model.CategoryType == item.Id ? @Html.RadioButtonFor(m => m.CategoryType, item.Id, new { @checked = true }) : @Html.RadioButtonFor(m => m.CategoryType, item.Id))
+                    @Html.Raw(item.Name)
+                </label>
+            </div>
+        }
+        <div><button type="submit" class="btn btn-theme">Select</button></div>
+    }
+</div>
+<div class="showback">
+
+    @Html.RouteLink("Insert a new category", "categoryItem", new { id = -1 }, new { @class = "btn btn-success" })
+
+    <hr />
+
+    @if (!Model.TargetCategories.Any())
+    {
+        <div class="alert alert-warning">
+            There is no Category to Manage. Please add a new Category using the Button above.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-advance table-hover" id="usersTable">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th class="centered">Active</th>
+                    <th class="centered">Published</th>
+                    <th class="centered">Deleted</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model.TargetCategories)
+                {
+                    <tr>
+                        <td>@category.Name</td>
+                        <td class="centered">
+                            @(category.IsActive ? Html.Raw("<i class='fa fa-check' style='color:#679E02'></i>") : Html.Raw("<i class='fa fa-times' style='color:#C90A1B'></i>"))
+                        </td>
+                        <td class="centered">
+                            @(category.Published ? Html.Raw("<i class='fa fa-check' style='color:#679E02'></i>") : Html.Raw("<i class='fa fa-times' style='color:#C90A1B'></i>"))
+                        </td>
+                        <td class="centered">
+                            @(category.Deleted ? Html.Raw("<i class='fa fa-check' style='color:#679E02'></i>") : Html.Raw("<i class='fa fa-times' style='color:#C90A1B'></i>"))
+                        </td>
+                        <td>
+
+                            <a title="Edit" class="btn btn-primary btn-xs" href="@Url.RouteUrl("categoryItem", new {id = category.Id})"><i class="fas fa-edit"></i></a>
+                            <button title="Delete" class="btn btn-danger btn-xs js-delete" data-category-id="@category.Id"><i class="fas fa-trash-alt"></i></button>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var table = $("#usersTable").DataTable();
+            //Read the Delete button from the table
+            $("#usersTable").on("click",
+                ".js-delete",
+                function () {
+                    //Call Api
+                    var button = $(this);
+                    bootbox.confirm("Are you sure you want to delete this Category premanently. This process is irreversible!!",
+                        function (result) {
+                            if (result) {
+                                window.location.href = "DeleteCategory/" + button.attr("data-category-id");
+                            }
+                        });
+                });
+        });
+    </script>
+}

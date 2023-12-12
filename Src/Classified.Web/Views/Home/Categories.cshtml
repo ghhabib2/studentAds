@@ -1,0 +1,256 @@
+﻿@using Classified.Component.Html
+@model Classified.Domain.ViewModels.Advertisment.ClassifiedAdvertisementListClientViewModel
+@{
+    ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_LayoutClient12.cshtml";
+}
+
+@if (Model.BreadcrumbList.Any())
+{
+    <!-- Breadcrumb -->
+    @Html.Breadcrumb(Model.BreadcrumbList).CssCLass("page-breadcrumb")
+}
+
+<!-- Categories List -->
+
+
+<section class="section-sm">
+    <div class="container">
+        @if (!string.IsNullOrEmpty(Model.SelectedClassifiedCategoryCategoryId))
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="search-result bg-gray">
+                        @Html.Raw($"<h2>Results For \"{Model.SelectedClassifiedCategoryName}\"</h2> \n <p>{Model.RecordCount} on {DateTime.UtcNow.ToLongDateString()} </p>")
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="search-result bg-gray">
+                        @Html.Raw($"<h2>Number of Results is</h2> \n <p>{Model.RecordCount} on {DateTime.UtcNow.ToLongDateString()} </p>")
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="category-search-filter">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>@Html.LabelFor(m => m.SelectedClassifiedCategoryCategoryId) :</strong>
+                </div>
+                <div class="col-md-9">
+                    <div class="dropdown hierarchy-select" id="categoryListDropDown">
+                        <button type="button" class="btn btn-primary dropdown-toggle" id="categoryListDropDownbutton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu" aria-labelledby="categoryListDropDown-button">
+                            <div class="hs-searchbox">
+                                <input type="text" class="form-control" autocomplete="off">
+                            </div>
+                            @if (string.IsNullOrEmpty(Model.SelectedClassifiedCategoryCategoryId))
+                            {
+                                @(Html.URLView(Model.CategoryList)
+                                                      .HtmlAttributes(new { @class = "hs-menu-inner" })
+                                                      .Children(m => m.ChildCategories)
+                                                      .ItemText("Name")
+                                                      .ItemValue("Id")
+                                                      .ItemURL("Url")
+                                                      .PlaceHolder("Please select the category you want to see its advertisements")
+                                                      .SelectedValue(Model.SelectedClassifiedCategoryCategoryId));
+                            }
+                            else
+                            {
+                                @(Html.URLView(Model.CategoryList)
+                                                      .HtmlAttributes(new { @class = "hs-menu-inner" })
+                                                      .Children(m => m.ChildCategories)
+                                                      .ItemText("Name")
+                                                      .ItemValue("Id")
+                                                      .ItemURL("Url")
+                                                      .PlaceHolder("Please select the category you want to see its advertisements")
+                                                      .SelectedValue(""));
+
+                            }
+                        </div>
+                        <input class="d-none" name="SelectedClassifiedCategoryCategoryId" id="SelectedClassifiedCategoryCategoryId" readonly="readonly" aria-hidden="true" type="text" />
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        @if (Model.RecordCount > 0)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="product-grid-list">
+                        <div class="row mt-30" id="adsTable">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul id="tablePaging" class="pagination">
+                @for (int i = 0; i <= ((Model.RecordCount + 9 - 1) / 9) - 1; i++)
+                {
+                    <li><button data-paging="@i" class="btnPaging">@(i + 1)</button></li>
+                }
+            </ul>
+
+
+        }
+    </div>
+</section>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+
+        $(document).ready(function() {
+
+
+            $('#categoryListDropDown').hierarchySelect({
+                width: 'auto'
+            });
+
+            $("#tablePaging").on("click",
+                ".btnPaging",
+                function() {
+                    //Save the button
+                    var adsTable = $("#adsTable");
+                    var button = $(this);
+
+                    adsTable.empty();
+                    adsTable.append('<p class="text-center">Please wait while we are loading information for you...</p>');
+
+                    //Call the data based on the selection
+                    $.ajax({
+                        @(!string.IsNullOrEmpty(Model.SelectedClassifiedCategoryCategoryId) ? Html.Raw($"url:\"/api/Content/{Model.SelectedClassifiedCategoryCategoryId}/\" + button.attr(\"data-paging\") + \"/\",") : Html.Raw($"url:\"/api/Content/\" + button.attr(\"data-paging\") + \"/\","))
+                        dataType: "json",
+                        success: function(data) {
+                            //Empty the AdsTable object
+                            adsTable.empty();
+                            $(data).each(function(index, item) {
+
+                                var targetDataLayout =
+                                    '<div class="col-sm-12 col-lg-4 col-md-6">\n<!-- Ads Card -->\n<div class="product-item bg-light">\n<div class="card">\n<div class="thumb-content">';
+
+                                //Check if the Price Feild Exist
+                                targetDataLayout = targetDataLayout + '<div class="price">' + item.priceString + '</div>';
+
+
+                                // Addding the Thumbnail Image
+                                targetDataLayout =
+                                    targetDataLayout +
+                                    '<a href >\n<img class="card-img-top img-fluid" src = "/Images/Watermarked/' +
+                                    item.imageName +
+                                    '/" />\n</a>\n</div>';
+
+                                // Adding the body content
+                                targetDataLayout =
+                                    targetDataLayout +
+                                '<div class="card-body" >\n<h4 class="card-title" >\n<a target="_blank" href="' + item.adsUrl +'" >' +
+                                    item.title +
+                                    '</a></h4>';
+                                targetDataLayout = targetDataLayout + '<ul class="list-inline product-meta">\n';
+                                targetDataLayout =
+                                    targetDataLayout +
+                                '<li class="list-inline-item" >\n<a target="_blank" href="' + item.categoryUrl +'">\n<i class="fa fa-folder-open-o"></i>' +
+                                    item.classifiedCategoryName +
+                                    '</a>\n</li>\n';
+                                targetDataLayout =
+                                    targetDataLayout +
+                                    '<li class="list-inline-item" >\n<a href>\n<i class="fa fa-calendar"></i>' +
+                                item.dateString +
+                                    '</a>\n</li>\n';
+                                targetDataLayout = targetDataLayout + '</ul>';
+                                targetDataLayout =
+                                    targetDataLayout + '<p class="card-text">' + item.shortDescription + '</p>\n';
+                                targetDataLayout = targetDataLayout + '</div>\n';
+
+                                //Add the selection button
+                                targetDataLayout =
+                                    targetDataLayout +
+                                '<div class="product-ratings text-center" >\n<a class="btn btn-primary" target="_blank" href="' + item.adsUrl + '" >Select</a>\n</div>\n<div class="product-ratings">&nbsp;<div/>\n</div>\n</div>\n</div>';
+
+
+                                adsTable.append(targetDataLayout);
+
+                            });
+
+                        },
+                        error: function(err) {
+                            alert(err);
+                        }
+                    });
+                });
+
+            // find the object who is responsible for loading informatoin
+            var adsTable = $("#adsTable");
+            adsTable.empty();
+            adsTable.append('<p class="text-center">Please wait while we are loading information for you...</p>');
+
+            //Call ajax to load data
+            $.ajax({
+                @(!string.IsNullOrEmpty(Model.SelectedClassifiedCategoryCategoryId) ? Html.Raw($"url:\"/api/Content/{Model.SelectedClassifiedCategoryCategoryId}/0/\",") : Html.Raw($"url:\"/api/Content/0/\","))
+                dataType: "json",
+                success: function(data) {
+                    //Empty the AdsTable object
+                    adsTable.empty();
+                    $(data).each(function(index, item) {
+
+                        var targetDataLayout =
+                            '<div class="col-sm-12 col-lg-4 col-md-6">\n<!-- Ads Card -->\n<div class="product-item bg-light">\n<div class="card">\n<div class="thumb-content">';
+
+                        //Check if the Price Feild Exist
+                        targetDataLayout = targetDataLayout + '<div class="price">' + item.priceString + '</div>';
+
+                        // Addding the Thumbnail Image
+                        targetDataLayout =
+                            targetDataLayout +
+                            '<a href >\n<img class="card-img-top img-fluid" src = "/Images/Watermarked/' +
+                            item.imageName +
+                            '/" />\n</a>\n</div>';
+
+                        // Adding the body content
+                        targetDataLayout =
+                            targetDataLayout +
+                        '<div class="card-body" >\n<h4 class="card-title" >\n<a target="_blank" href="' + item.adsUrl + '" >' +
+                            item.title +
+                            '</a></h4>';
+                        targetDataLayout = targetDataLayout + '<ul class="list-inline product-meta">\n';
+                        targetDataLayout =
+                            targetDataLayout +
+                        '<li class="list-inline-item" >\n<a target="_blank" href="' + item.categoryUrl +'">\n<i class="fa fa-folder-open-o"></i>' +
+                            item.classifiedCategoryName +
+                            '</a>\n</li>\n';
+                        targetDataLayout =
+                            targetDataLayout +
+                            '<li class="list-inline-item" >\n<a href>\n<i class="fa fa-calendar"></i>' +
+                        item.dateString +
+                            '</a>\n</li>\n';
+                        targetDataLayout = targetDataLayout + '</ul>';
+                        targetDataLayout =
+                            targetDataLayout + '<p class="card-text">' + item.shortDescription + '</p>\n';
+                        targetDataLayout = targetDataLayout + '</div>\n';
+
+                        //Add the selection button
+                        targetDataLayout =
+                            targetDataLayout +
+                        '<div class="product-ratings text-center" >\n<a class="btn btn-primary" target="_blank" href="' + item.adsUrl + '" >Select</a>\n</div>\n<div class="product-ratings">&nbsp;<div/>\n</div>\n</div>\n</div>';
+
+
+                        adsTable.append(targetDataLayout);
+
+                    });
+
+                },
+                error: function(err) { alert(err); }
+            });
+        });
+
+    </script>
+
+}

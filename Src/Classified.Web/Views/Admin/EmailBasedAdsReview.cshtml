@@ -1,0 +1,323 @@
+﻿@model Classified.Domain.ViewModels.Advertisment.ClassifiedAdvertismentManagementViewModel
+@{
+    ViewBag.Title = "Email based advertisement management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="showback">
+    @if (!Model.AdsList.Any())
+    {
+        //Show Error to the user
+        <div class="alert alert-warning">
+            There is no Advertisement to be reviewed at the moment.
+        </div>
+    }
+    else
+    {
+        //Show the Table
+        <table class="table table-striped table-advance table-hover" id="adsTable">
+            <thead>
+                <tr>
+                    <th>Ads Title</th>
+                    <th class="centered">Creation Date</th>
+                    <th class="centered">Submission Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ads in Model.AdsList)
+                {
+                    <tr>
+                        <td>@ads.Title</td>
+                        <td class="centered">
+                            @ads.CreatedOnUtc.ToShortDateString()
+                        </td>
+                        <td class="centered">
+                            @ads.SubmitDate.ToShortDateString()
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("EmailBasedAdsReview", "Admin", FormMethod.Post, new { @class = "col-sm-1" }))
+                            {
+                                <input type="hidden" id="Id" name="Id" value="@ads.Id" />
+                                <button type="submit" class="btn btn-primary" title="Edit">Review</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+@if (Model.Id != -1)
+{
+
+    <div class="showback">
+        <h4 class="mb">
+            <i class="fa fa-angle-right"></i> Ads Title : @(Model.Id == -1 ? Html.Raw("No Ads info to review") : Html.Raw(Model.ClassifiedAds.Title))
+        </h4>
+
+        @if (Model.ClassifiedAds.RejectComments.Any())
+        {
+            <div class="alert alert-danger">
+                @Html.Raw($"This advertisement rejected {Model.ClassifiedAds.RejectComments.Count} times. Please check the reasons in <b>Review Result</b> tab.")
+            </div>
+        }
+        @using (Html.BeginForm("AdsEmailRejection", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form", @id = "AdsReviewForm" }))
+        {
+            <ul class="nav nav-tabs" id="AdsTab" role="tablist">
+                <li class="active">
+                    <a id="basicinfo-tab" data-toggle="tab" href="#basicinfo">Basic Information</a>
+                </li>
+                @if (!string.IsNullOrEmpty(Model.ClassifiedAds.Description))
+                {
+                    <li>
+                        <a id="description-tab" data-toggle="tab" href="#description">Description</a>
+                    </li>
+                }
+                @if (Model.ClassifiedAds.Attributes.Any())
+                {
+                    <li>
+                        <a id="attributes-tab" data-toggle="tab" href="#attributes">Attributes</a>
+                    </li>
+                }
+                @if (Model.ClassifiedAds.ClassifiedImageses.Any())
+                {
+                    <li>
+                        <a id="images-tab" data-toggle="tab" href="#images">Images</a>
+                    </li>
+                }
+                <li>
+                    <a id="seo-tab" data-toggle="tab" href="#seo">SEO Information</a>
+                </li>
+                <li>
+                    <a id="review-tab" data-toggle="tab" href="#review">Review Result</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="adsTabContent">
+                <div class="tab-pane fade in active" id="basicinfo">
+                    <div>
+                        &nbsp;
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-sm-3 control-label"><b>Category :</b></label>
+                        <div class="col-sm-9">
+                            @Model.ClassifiedAds.ClassifiedCategory.Name
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-sm-3 control-label"><b>Short Description :</b></label>
+                        <div class="col-sm-9">
+                            @Model.ClassifiedAds.ShortDescription
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-sm-3 control-label"><b>Address :</b></label>
+                        <div class="col-sm-9">
+                            @Model.ClassifiedAds.Address
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-sm-3 control-label"><b>Phone Number :</b></label>
+                        <div class="col-sm-9">
+                            @Model.ClassifiedAds.PhoneNumber
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 col-sm-3 control-label"><b>Price :</b></label>
+                        <div class="col-sm-9">
+                            @Html.Raw($"{@Model.ClassifiedAds.Price:N0}")
+                        </div>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.ClassifiedAds.Description))
+                {
+                    <div class="tab-pane fade" id="description">
+                        <div>
+                            &nbsp;
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 col-sm-3 control-label"><b>Description :</b></label>
+                            <div class="col-sm-9">
+                                
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                @Html.Raw(Model.ClassifiedAds.Description)
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (Model.ClassifiedAds.Attributes.Any())
+                {
+                    <div class="tab-pane fade" id="attributes">
+                        @foreach (var item in Model.ClassifiedAds.Attributes)
+                        {
+                            <div>
+                                &nbsp;
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 col-sm-3 control-label"><b>@item.AttributeLabel :</b></label>
+                                <div class="col-sm-9">
+                                    @item.AttributeValue
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                @if (Model.ClassifiedAds.ClassifiedImageses.Any())
+                {
+                    <div class="tab-pane fade" id="images">
+                        @foreach (var image in Model.ClassifiedAds.ClassifiedImageses)
+                        {
+                            <div>
+                                &nbsp;
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 col-sm-3 control-label">@image.ImageGuid</label>
+                                <div class="col-sm-9">
+                                    <img class="d-block w-100" src="/Images/Watermarked/@image.ImageName/" alt="@image.ImageGuid" style="width: 50%; margin: 0 auto;" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                    <div class="tab-pane fade" id="seo">
+                        <div>
+                            &nbsp;
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 col-sm-3 control-label"><b>META Title:</b></label>
+                            <div class="col-sm-9">
+                                @Model.ClassifiedAds.MetaTitle
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 col-sm-3 control-label"><b>META Keywords:</b></label>
+                            <div class="col-sm-9">
+                                @Model.ClassifiedAds.MetaKeyWord
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 col-sm-3 control-label"><b>META Description:</b></label>
+                            <div class="col-sm-9">
+                                @Model.ClassifiedAds.MetaDescription
+                            </div>
+                        </div>
+                    </div>
+                <div class="tab-pane fade" id="review">
+                    <div>
+                        &nbsp;
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="button" data-ads-id="@Model.Id" class="btn btn-success btnConfirm">Confirm this Advertisement</button>
+                    </div>
+                    @if (Model.ClassifiedAds.RejectComments.Any())
+                    {
+                        <h4 class="mb">
+                            <i class="fa fa-angle-right"></i>Rejection reasons:
+                        </h4>
+                        <div class="form-group">
+                            
+                            <ul>
+                                @foreach (var item in Model.ClassifiedAds.RejectComments)
+                                {
+                                   <li style="list-style: upper-roman;color:red">@Html.Raw($"{item.AdminUserName} : {item.Comment}")</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <label for="Comment" class="col-sm-3 col-sm-3 control-label"><b>Rejection Reason:</b></label>
+                        <div class="col-sm-9">
+                            <textarea id="Comment" name="Comment" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ClassifiedAdvertisementId" id="ClassifiedAdvertisementId" value="@Model.ClassifiedAds.Id"/>
+                        <button type="button" class="btn btn-danger btnReject">Reject</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+
+            @{
+                if (Model.Id != -1)
+                {
+                    @Html.Raw(string.Format("var form = $('#AdsReviewForm');var newPosition = $(form).offset();$('html, body').stop().animate({{ scrollTop: newPosition.top }}, 500);"))
+                    ;
+                }
+            }
+
+            
+            //Confirm the Advertisement
+            $("#AdsReviewForm").on("click",
+                ".btnReject",
+                function() {
+                    //Call Api
+                    var button = $(this);
+                    bootbox.confirm(
+                        {
+                            message:
+                                "Are your sure you want to reject this advertisement!!",
+                            buttons: {
+                                confirm: {
+                                    label: "Reject this Ads",
+                                    className: "btn btn-danger btnModal"
+                                },
+                                cancel:
+                                {
+                                    label: "No",
+                                    className: "btn btn-success"
+                                }
+                            },
+                            callback: function(result) {
+                                if (result) {
+                                    document.getElementById("AdsReviewForm").submit();
+                                    }
+                            }
+                        });
+                });
+
+            //Reject the Advertisement
+            $("#AdsReviewForm").on("click",
+                ".btnConfirm",
+                function () {
+                    //Call Api
+                    var button = $(this);
+                    bootbox.confirm(
+                        {
+                            message:
+                                "Are you sure you want to confirm this advertisement? This process is irreversible!!",
+                            buttons: {
+                                confirm: {
+                                    label: "Confirm this Ads",
+                                    className: "btn btn-success btnModal"
+                                },
+                                cancel:
+                                {
+                                    label: "No",
+                                    className: "btn btn-danger"
+                                }
+                            },
+                            callback: function (result) {
+                                if (result) {
+                                    window.location.href = "/Admin/FinalConfirmAdsEmail/" + button.attr("data-ads-id");
+
+                                }
+                            }
+                        });
+                });
+        });
+    </script>
+}
+

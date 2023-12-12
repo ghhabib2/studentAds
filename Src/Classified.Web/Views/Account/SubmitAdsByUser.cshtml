@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "SubmitAdsByUser";
+    Layout = "~/Views/Shared/_LayoutClient12.cshtml";
+}
+
+<section class="section bg-gray">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 text-center">
+                Please use <strong>Submit your ads by email</strong> service button in bottom of this page in order to submit your advertisement.<br/> We will inform you when this service is ready to use.
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-12 text-center">
+                <img class="img-fluid" src="/Content/Images/underConstruction.png" />
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-12 text-center">
+                &nbsp;
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-12 text-center">
+                @Html.ActionLink("Submit Ads by Email", "SubmitAdsByEmail", "Advertisements", null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+       
+    </div>
+</section>
+
+
+

@@ -1,0 +1,50 @@
+{
+  "name": "smtp4dev",
+  "version": "1.0.0",
+  "description": "smtp4dev - the mail server for development",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rnwood/smtp4dev.git"
+  },
+  "engines": {
+    "node": ">= 6.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rnwood/smtp4dev/issues"
+  },
+  "homepage": "https://github.com/rnwood/smtp4dev#readme",
+  "devDependencies": {
+    "@aspnet/signalr": "^1.0.0-preview1-update1",
+    "@types/axios": "^0.14.0",
+    "@types/vue": "^2.0.0",
+    "axios": "^0.18.0",
+    "css-loader": "^0.28.10",
+    "element-theme-chalk": "^2.2.1",
+    "element-theme-default": "^1.4.13",
+    "element-ui": "^2.2.1",
+    "es6-collections": "^0.5.6",
+    "file-loader": "^1.1.11",
+    "fswatch": "^0.1.4",
+    "html-loader": "^0.5.5",
+    "postcss-loader": "^2.1.1",
+    "style-loader": "^0.20.2",
+    "ts-loader": "^4.0.1",
+    "typescript": "^2.7.2",
+    "vue": "^2.5.13",
+    "vue-class-component": "^6.2.0",
+    "vue-loader": "^14.2.1",
+    "vue-property-decorator": "^6.0.0",
+    "vue-style-loader": "^4.0.2",
+    "vue-template-compiler": "^2.5.13",
+    "webpack": "^4.1.0",
+    "webpack-cli": "^2.0.10"
+  }
+}

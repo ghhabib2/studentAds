@@ -1,0 +1,98 @@
+﻿@model Classified.Domain.ViewModels.AccountViewModels.AdminProfileEditViewModel
+@{
+    ViewBag.Title = "ProfileManagment";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>ProfileManagment</h2>
+
+<div class="form-panel">
+
+    @if (string.IsNullOrEmpty(Model.Id))
+    {
+
+        <h4 class="mb">
+            <i class="fa fa-angle-right">
+                Register New User
+            </i>
+        </h4>
+    }
+    else
+    {
+
+        <h4 class="mb">
+            <i class="fa fa-angle-right">
+                Update user Profile
+            </i>
+        </h4>
+    }
+
+    @using (Html.BeginForm("ProfileManagement", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form", @id = "userInfoForm" }))
+    {
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(m => m.FirstName, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+            </div>
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => m.FirstName)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.LastName, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+            </div>
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => m.LastName)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control",@readonly="readonly",@disabled= "disabled" })
+            </div>
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => m.Email)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 col-sm-3 control-label">Your Role : </label>
+            <div class="col-sm-9">
+                <label class="form-control">@Model.RoleName</label>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.PhoneNumber, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Comment, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextAreaFor(m => m.Comment, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="checkbox">
+            <label>
+                @Html.CheckBox("chk_Confirmation", new { required = "true" })
+                @Html.ValidationMessage("chk_Confirmation", "Please check the check box, if you confirm the information provided above!!")
+            </label>
+        </div>
+
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m=>m.RoleName)
+        @Html.AntiForgeryToken()
+
+        <button type="submit" class="btn btn-theme" id="submit" >Edit</button>
+
+    }
+
+</div>
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+}

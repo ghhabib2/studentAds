@@ -1,0 +1,21 @@
+﻿@using Classified.Component.Html
+@model Classified.Domain.ViewModels.Client.AboutUs.AboutUsViewModel
+@{
+    ViewBag.Title = "About";
+    Layout = "~/Views/Shared/_LayoutClient12.cshtml";
+}
+@if (Model.BreadcrumbList.Any())
+{
+    <!-- Breadcrumb -->
+    @Html.Breadcrumb(Model.BreadcrumbList).CssCLass("page-breadcrumb")
+}
+
+<section class="section bg-gray">
+    <div class="container">
+
+        <h2>@ViewBag.Title.</h2>
+        <h3>@ViewBag.Message</h3>
+
+        <p>Use this area to provide additional information.</p>
+    </div>
+</section>

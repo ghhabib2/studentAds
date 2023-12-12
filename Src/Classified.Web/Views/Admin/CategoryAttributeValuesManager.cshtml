@@ -1,0 +1,193 @@
+﻿@model Classified.Domain.ViewModels.Advertisment.CategoryAttributeValuesManagementViewModelate
+@{
+    ViewBag.Title = "Category Attributes Values Manager";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="showback">
+
+    @using (Html.BeginForm("CategoryAttributeValuesManager", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryId, new { @class = "col-sm-3  control-label" })
+            <div class="col-sm-9">
+                @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.CategoryList, "Id", "Name"), null, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryAttributeId, new { @class = "col-sm-3  control-label" })
+            <div class="col-sm-9">
+                @Html.DropDownListFor(m => m.CategoryAttributeId, new SelectList(Model.AttributesList, "Id", "AttributeLabel"), null, new { @class = "form-control" })
+            </div>
+        </div>
+        <div><button type="submit" id="AttrubtListFilterSubmitButton" class="btn btn-theme">Select</button></div>
+    }
+</div>
+
+<div class="showback">
+
+    @if (!Model.AttributeValues.Any())
+    {
+
+
+        using (Html.BeginForm("CategoryAttributeValuesManager", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+        {
+            <input type="hidden" id="CategoryAttributeId" name="CategoryAttributeId" value="@Model.CategoryAttributeId" />
+            <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+            <div><button type="submit" class="btn btn-success buttonTracker">Insert a new vale</button></div>
+        }
+
+        <hr />
+        <div class="alert alert-warning">
+            There is no registered value for this category's  attribute. Please register one by clicking on the buttom above this message.
+        </div>
+    }
+    else
+    {
+        //Hold the value of the AttributeId for later processes temperary
+
+        using (Html.BeginForm("CategoryAttributeValuesManager", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+        {
+            <input type="hidden" id="CategoryAttributeId" name="CategoryAttributeId" value="@Model.CategoryAttributeId" />
+            <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+            <div><button type="submit" class="btn btn-success buttonTracker">Insert a new value</button></div>
+        }
+
+        <hr />
+        <table class="table table-striped table-advance table-hover" id="usersTable">
+            <thead>
+                <tr>
+                    <th>Value Amount/Text</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var value in Model.AttributeValues)
+                {
+                    <tr>
+                        <td>@value.AttributeValue</td>
+                        <td>
+                            @using (Html.BeginForm("CategoryAttributeValuesManager", "Admin", FormMethod.Post, new { @class = "col-sm-1" }))
+                            {
+                                <input type="hidden" id="CategoryAttributeId" name="CategoryAttributeId" value="@Model.CategoryAttributeId" />
+                                <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+                                <input type="hidden" id="AttributeValueId" name="AttributeValueId" value="@value.Id" />
+                                <button type="submit" class="btn btn-primary btn-xs buttonTracker" title="Edit"><i class="fas fa-edit"></i></button>
+
+                            }
+                            <div class="col-sm-1">
+                                <button title="Delete" class="btn btn-danger btn-xs js-delete buttonTracker" data-attribute-value-id="@value.Id" data-attribute-id="@Model.CategoryAttributeId" data-category-id="@Model.CategoryId"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    }
+</div>
+
+<div class="showback">
+    <h4 class="mb">
+        <i class="fa fa-angle-right"></i> @(Model.AttributeValueId == -1 ? Html.Raw("New attribute Value") : Html.Raw($"Changing the amount for {Model.AttributeValue.AttributeValue}"))
+    </h4>
+    @using (Html.BeginForm("SaveCategoryAttributeValue", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form", @id = "AttributeValueRegisterationForm" }))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.AttributeValue.AttributeValue, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextBoxFor(m => m.AttributeValue.AttributeValue, new { @class = "form-control" })
+            </div>
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => m.AttributeValue.AttributeValue)
+            </div>
+        </div>
+
+        <input type="hidden" id="CategoryAttributeId" name="CategoryAttributeId" value="@Model.CategoryAttributeId" />
+        <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+        <input type="hidden" id="AttributeValueId" name="AttributeValueId" value="@Model.AttributeValueId" />
+                                
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-primary">
+            @(Model.AttributeValueId == -1 ? Html.Raw("Save") : Html.Raw("Update"))
+        </button>
+    }
+</div>
+
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+
+            @{
+                if (Model.AttributeValueId != -1)
+                {
+                    @Html.Raw(string.Format("var form = $('#AttributeValueRegisterationForm');var newPosition = $(form).offset();$('html, body').stop().animate({{ scrollTop: newPosition.top }}, 500);"))
+                    ;
+                }
+            }
+
+            $("#CategoryId").change(function() {
+                // For counting the number of records
+                var dataCount = 0;
+                //Fetching Data from API
+                $.ajax({
+                    url: '/api/CategoryAttributes/' + this.value,
+                    type: 'GET' // this is default, but worth pointing out
+                }).done(function(data) {
+                    // you may use "data" to access the underlying data
+                    dataCount = data.length;
+                    var result = '';
+                    for (var i = 0, il = data.length; i < il; i++) {
+                        result = result + '<option value="' + data[i].id + '">' + data[i].attributeLabel + '</option>';
+                    }
+
+                    $("#CategoryAttributeId").html(result);
+
+                    if (dataCount === 0) {
+                        $("#AttrubtListFilterSubmitButton").prop('disabled', true);
+                        bootbox.alert(
+                            "There is no attribute in target category with contro types of Drop-Down List or Radio-Button List.");
+                        } else {
+                        bootbox.alert(
+                            "List of available attributes loaded for you. Please click on the select button in order to load the infoamtion.");
+                        $("#AttrubtListFilterSubmitButton").prop('disabled', false);
+                        
+                    }
+
+                    $('.buttonTracker').prop('disabled', true);
+
+            });
+
+        });
+
+
+        var table = $("#usersTable").DataTable();
+        //Read the Delete button from the table
+        $("#usersTable").on("click",
+            ".js-delete",
+            function() {
+                //Call Api
+                var button = $(this);
+                bootbox.confirm("Are you sure you want to delete this Attribute Value? This process is irreversible!!",
+                    function(result) {
+                        if (result) {
+                            window.location.href = "DeleteCategoryAttributeValue/" +
+                                button.attr("data-attribute-value-id") +
+                                "/" +
+                                button.attr("data-attribute-id") +
+                                "/" +
+                                button.attr("data-category-id");
+                        }
+                    });
+            });
+        });
+    </script>
+}
+
+

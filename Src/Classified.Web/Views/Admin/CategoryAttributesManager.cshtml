@@ -1,0 +1,165 @@
+﻿@model Classified.Domain.ViewModels.Advertisment.CategoryAttributesManagmentViewModel
+@{
+    ViewBag.Title = "Category Attributes Manager";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="showback">
+
+    @using (Html.BeginForm("CategoryAttributesManager", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryId, new { @class = "col-sm-3  control-label" })
+            <div class="col-sm-9">
+                @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.HierarchyCategoryList, "Id", "Name"), null, new { @class = "form-control" })
+            </div>
+        </div>
+        <div><button type="submit" class="btn btn-theme">Select</button></div>
+    }
+</div>
+<div class="showback">
+
+    @if (!Model.CategoryAttributes.Any())
+    {
+
+
+        using (Html.BeginForm("CategoryAttributesManager", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+        {
+            <input type="hidden" id="CategoryAttributeId" name="CategoryAttributeId" value="-1" />
+            <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+            <div><button type="submit" class="btn btn-success">Insert a new Attribute</button></div>
+        }
+
+        <hr />
+        <div class="alert alert-warning">
+            There is no Attribute for the selected Category
+        </div>
+    }
+    else
+    {
+        //Hold the value of the AttributeId for later processes temperary
+
+        using (Html.BeginForm("CategoryAttributesManager", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form" }))
+        {
+            <input type="hidden" id="CategoryAttributeId" name="CategoryAttributeId" value="-1" />
+            <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+            <div><button type="submit" class="btn btn-success">Insert a new Attribute</button></div>
+        }
+
+        <hr />
+        <table class="table table-striped table-advance table-hover" id="usersTable">
+            <thead>
+                <tr>
+                    <th>Attribute Name</th>
+                    <th>Attribute Label</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var attribute in Model.CategoryAttributes)
+                {
+                    <tr>
+                        <td>@attribute.AttributeName</td>
+                        <td>@attribute.AttributeLabel</td>
+                        <td>
+                            @using (Html.BeginForm("CategoryAttributesManager", "Admin", FormMethod.Post, new { @class = "col-sm-1" }))
+                            {
+                                <input type="hidden" id="CategoryAttributeId" name="CategoryAttributeId" value="@attribute.Id" />
+                                <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+                                <button type="submit" class="btn btn-primary btn-xs" title="Edit"><i class="fas fa-edit"></i></button>
+
+                            }
+                            <div class="col-sm-1">
+                                <button title="Delete" class="btn btn-danger btn-xs js-delete" data-attribute-id="@attribute.Id" data-category-id="@Model.CategoryId"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    }
+</div>
+<div class="showback">
+    <h4 class="mb">
+        <i class="fa fa-angle-right"></i> @(Model.CategoryAttributeId == -1 ? Html.Raw("New attribute details") : Html.Raw($"{Model.CategoryAttribut.AttributeName} details"))
+    </h4>
+    @using (Html.BeginForm("SaveCategoryAttribute", "Admin", FormMethod.Post, new { @class = "form-horizontal style-form", @id = "AttributeRegisterationForm" }))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryAttribut.AttributeName, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextBoxFor(m => m.CategoryAttribut.AttributeName, new { @class = "form-control" })
+            </div>
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => m.CategoryAttribut.AttributeName)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryAttribut.AttributeLabel, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.TextBoxFor(m => m.CategoryAttribut.AttributeLabel, new { @class = "form-control" })
+            </div>
+            <div class="col-sm-12">
+                @Html.ValidationMessageFor(m => m.CategoryAttribut.AttributeLabel)
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryAttribut.AttributeControlTypeId, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.DropDownListFor(m => m.CategoryAttribut.AttributeControlTypeId, new SelectList(Model.CategoryAttributesControlType, "ControlTypeId", "ControlTypeName"), "Select the control type", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CategoryAttribut.AttributeSearchBy, new { @class = "col-sm-3 col-sm-3 control-label" })
+            <div class="col-sm-9">
+                @Html.DropDownListFor(m => m.CategoryAttribut.AttributeSearchBy, new SelectList(Model.CategoryAttributesSearchByList, "SearchById", "SearhcByName"), "Select the search by type", new { @class = "form-control" })
+            </div>
+        </div>
+        
+        <input type="hidden" id="CategoryAttributeId" name="CategoryAttributeId" value="@Model.CategoryAttributeId" />
+        <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+        
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-primary">
+            @(Model.CategoryAttributeId == -1 ? Html.Raw("Save") : Html.Raw("Update"))
+        </button>
+    }
+</div>
+
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+            @{
+                if (Model.CategoryAttributeId != -1)
+                {
+                    @Html.Raw(string.Format("var form = $('#AttributeRegisterationForm');var newPosition = $(form).offset();$('html, body').stop().animate({{ scrollTop: newPosition.top }}, 500);"));
+                }
+            }
+
+           var table = $("#usersTable").DataTable();
+            //Read the Delete button from the table
+            $("#usersTable").on("click",
+                ".js-delete",
+                function () {
+                    //Call Api
+                    var button = $(this);
+                    bootbox.confirm("Are you sure you want to delete this Attribute. This process is irreversible!!",
+                        function (result) {
+                            if (result) {
+                                window.location.href = "DeleteCategoryAttribute/" + button.attr("data-attribute-id") + "/" + button.attr("data-category-id") ;
+                            }
+                        });
+                });
+        });
+    </script>
+}
+
+

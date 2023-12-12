@@ -1,0 +1,102 @@
+﻿@model Classified.Domain.ViewModels.Advertisment.CategoryRegisterViewMoel
+@{
+    ViewBag.Title = Model.Category.Id == -1 ? "Register new category" : "Update category's information";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="form-panel">
+
+    @if (Model.Category.Id == -1)
+    {
+
+        <h4 class="mb">
+            <i class="fa fa-angle-right">
+                Register new category
+            </i>
+        </h4>
+    }
+    else
+    {
+
+        <h4 class="mb">
+            <i class="fa fa-angle-right">
+                Update category's information
+            </i>
+        </h4>
+    }
+
+    @using (Html.BeginForm("CategorySave", "Admin"))
+    {
+        @Html.ValidationSummary(true, "Please fix the following error:")
+        <div class="form-group">
+            @Html.LabelFor(m => m.Category.Name)
+            @Html.TextBoxFor(m => m.Category.Name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Category.Name)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ParentCategoryId)
+            @Html.DropDownListFor(m => m.ParentCategoryId, new SelectList(Model.CateogryList, "Id", "Name"), "Select Parent Category", new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Category.Description)
+            @Html.TextAreaFor(m => m.Category.Description, new { @class = "form-control" })
+        </div>
+        <div class="form-check">
+            @Html.CheckBoxFor(m => m.Category.IsActive, new { @class = "form-check-input" })
+            @Html.LabelFor(m => m.Category.IsActive)
+        </div>
+        <div class="form-check">
+            @Html.CheckBoxFor(m => m.Category.Published, new { @class = "form-check-input" })
+            @Html.LabelFor(m => m.Category.Published)
+        </div>
+        <div class="form-check">
+            @Html.CheckBoxFor(m => m.Category.Deleted, new { @class = "form-check-input" })
+            @Html.LabelFor(m => m.Category.Deleted)
+        </div>
+        <div class="form-check">
+            @Html.CheckBoxFor(m => m.Category.IsPriceShown, new { @class = "form-check-input" })
+            @Html.LabelFor(m => m.Category.IsPriceShown)
+        </div>
+        <div class="form-check">
+            @Html.CheckBoxFor(m => m.Category.ShowOnHomePage, new { @class = "form-check-input" })
+            @Html.LabelFor(m => m.Category.ShowOnHomePage)
+        </div>
+        <div class="form-check">
+            @Html.LabelFor(m => m.Category.MetaTitle)
+            @Html.TextBoxFor(m => m.Category.MetaTitle, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Category.MetaTitle)
+        </div>
+        <div class="form-check">
+            @Html.LabelFor(m => m.Category.MetaKeyWord)
+            @Html.TextBoxFor(m => m.Category.MetaKeyWord, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Category.MetaKeyWord)
+        </div>
+        <div class="form-check">
+            @Html.LabelFor(m => m.Category.MetaDescription)
+            @Html.TextAreaFor(m => m.Category.MetaDescription, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Category.MetaDescription)
+        </div>
+        <div class="form-group">
+        </div>
+            @Html.HiddenFor(m => m.Category.Id)
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-primary">
+                @if (Model.Category.Id == -1)
+                {
+                    @Html.Raw("Save")
+                }
+                else
+                {
+                    @Html.Raw("Update")
+                }
+            </button>
+        
+    }
+
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
